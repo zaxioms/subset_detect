@@ -1,0 +1,4 @@
+data/
+venv/
+.vscode/
+annotation_json/
