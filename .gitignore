@@ -1,4 +1,4 @@
 data/
 venv/
 .vscode/
-annotation_json/
+*instance_json/
