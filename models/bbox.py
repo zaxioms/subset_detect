@@ -6,7 +6,7 @@ from torchvision import models
 class bbox(nn.Module):
     def __init__(self):
         super(bbox, self).__init__()
-        resnet = models.resnet152(pretrained=True)
+        resnet = models.resnet34(pretrained=True)
         layers = list(resnet.children())[:8]
         self.features1 = nn.Sequential(*layers[:6])
         self.features2 = nn.Sequential(*layers[6:])

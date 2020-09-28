@@ -4,15 +4,8 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import torch
-from skimage import io
+import cv2
 from torch.utils.data import Dataset
-
-import raw_data_manager as dm
-
-CUSTOM_JSON_LOC = "data/custom_json"
-IMAGE_LOC = "data/images"
-DEFINITIVE_JSON_LOC = CUSTOM_JSON_LOC + "definitive.json"
 
 
 class BallDataset(Dataset):
@@ -32,37 +25,31 @@ class BallDataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
         img_name = os.path.join(self.root_dir, self.df.iloc[idx, 0])
-        image = io.imread(img_name)
+        image = cv2.imread(img_name, cv2.IMREAD_COLOR)
         bbox = self.df.iloc[idx, 1:]
         bbox = np.array([bbox])
         bbox = bbox.astype("float").reshape(4)
-        print(bbox)
-        sample = {"image": image, "bbox": bbox}
 
         if self.transform:
-            sample = self.transform(sample)
+            image = self.transform(image)
 
-        return sample
+        return (image, bbox)
 
 
 if __name__ == "__main__":
-    dm.assert_data(CUSTOM_JSON_LOC, IMAGE_LOC)
-
     bd = BallDataset(
-        csv_file="data/true_annotations/annotations.csv", root_dir="data/images"
+        csv_file="data/true_annotations/resized_annotations.csv",
+        root_dir="data/resized_images",
     )
 
     fig, ax = plt.subplots(1)
-    sample = bd[3650]
-    plt.imshow(sample["image"])
+    sample = bd[4320]
+    plt.imshow(sample[0])
     rect = patches.Rectangle(
-        (sample["bbox"][0], sample["bbox"][1]),
-        sample["bbox"][2],
-        sample["bbox"][3],
+        (sample[1][0], sample[1][1]),
+        sample[1][2],
+        sample[1][3],
         linewidth=1,
         edgecolor="r",
         facecolor="none",
