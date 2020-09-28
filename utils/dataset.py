@@ -8,11 +8,11 @@ import torch
 from skimage import io
 from torch.utils.data import Dataset
 
+import raw_data_manager as dm
+
 CUSTOM_JSON_LOC = "data/custom_json"
 IMAGE_LOC = "data/images"
 DEFINITIVE_JSON_LOC = CUSTOM_JSON_LOC + "definitive.json"
-
-dm.assert_data(CUSTOM_JSON_LOC, IMAGE_LOC)
 
 
 class BallDataset(Dataset):
@@ -49,20 +49,23 @@ class BallDataset(Dataset):
         return sample
 
 
-# bd = BallDataset(
-#     csv_file="data/true_annotations/annotations.csv", root_dir="data/images"
-# )
+if __name__ == "__main__":
+    dm.assert_data(CUSTOM_JSON_LOC, IMAGE_LOC)
 
-# fig, ax = plt.subplots(1)
-# sample = bd[3650]
-# plt.imshow(sample["image"])
-# rect = patches.Rectangle(
-#     (sample["bbox"][0], sample["bbox"][1]),
-#     sample["bbox"][2],
-#     sample["bbox"][3],
-#     linewidth=1,
-#     edgecolor="r",
-#     facecolor="none",
-# )
-# ax.add_patch(rect)
-# plt.show()
+    bd = BallDataset(
+        csv_file="data/true_annotations/annotations.csv", root_dir="data/images"
+    )
+
+    fig, ax = plt.subplots(1)
+    sample = bd[3650]
+    plt.imshow(sample["image"])
+    rect = patches.Rectangle(
+        (sample["bbox"][0], sample["bbox"][1]),
+        sample["bbox"][2],
+        sample["bbox"][3],
+        linewidth=1,
+        edgecolor="r",
+        facecolor="none",
+    )
+    ax.add_patch(rect)
+    plt.show()
