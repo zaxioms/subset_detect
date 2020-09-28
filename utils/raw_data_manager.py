@@ -1,6 +1,8 @@
-import os
 import json
+import os
 import urllib.request
+
+import pandas as pd
 
 
 def load_json(path):
@@ -10,6 +12,7 @@ def load_json(path):
     return data
 
 
+# grabs COCO data of a specific ID
 def data_grab(instance_json_loc, custom_json_loc, image_dir, idee):
     for filename in os.listdir(instance_json_loc):
         print(filename)
@@ -19,7 +22,7 @@ def data_grab(instance_json_loc, custom_json_loc, image_dir, idee):
         for ann in annotations["annotations"]:
             if ann["category_id"] == idee:
                 image_ids.append(ann["image_id"])
-                custom_ann[ann["image_id"]] = ann["bbox"]
+                custom_ann[str(ann["image_id"]) + ".jpg"] = ann["bbox"]
 
         with open(os.path.join(custom_json_loc, filename), "w") as f:
             json.dump(custom_ann, f)
@@ -32,6 +35,7 @@ def data_grab(instance_json_loc, custom_json_loc, image_dir, idee):
                 )
 
 
+# iterates over the custom jsons and removes duplicates
 def data_mng(custom_json_loc, image_dir):
     definitive_json = {}
     for filename in os.listdir(custom_json_loc):
@@ -45,6 +49,12 @@ def data_mng(custom_json_loc, image_dir):
         print("Wrote JSON")
 
 
+def json_to_csv(json_loc, csv_loc, header=False):
+    df = pd.read_json(json_loc).transpose()
+    df.to_csv(csv_loc, header=header)
+
+
+# asserts that for every file there is a json entry
 def assert_data(custom_json_loc, image_dir):
     valid = True
     assert os.path.isfile(
@@ -52,13 +62,18 @@ def assert_data(custom_json_loc, image_dir):
     ), "definitive.json not found"
     definitive_json = load_json(os.path.join(custom_json_loc, "definitive.json"))
     for filename in os.listdir(image_dir):
-        if os.path.splitext(filename)[0] not in definitive_json.keys():
+        if filename not in definitive_json.keys():
             print("file missing: ", filename)
             valid = False
     if valid:
         print("All files asserted and valid!")
 
 
-# data_grab("data/orig_instance_json/", "data/custom_json/", "data/images/", 37)
-# data_mng("data/custom_json/", "data/images/")
-assert_data("data/custom_json/", "data/images/")
+if __name__ == "__main__":
+    # data_grab("data/orig_instance_json/", "data/custom_json/", "data/images/", 37)
+    # data_mng("data/custom_json/", "data/images/")
+    # assert_data("data/custom_json/", "data/images/")
+
+    json_to_csv(
+        "data/custom_json/definitive.json", "data/true_annotations/annotations.csv"
+    )
