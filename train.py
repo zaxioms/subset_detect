@@ -51,4 +51,3 @@ y = loss_arr
 
 fig = px.line(x=x, y=y)
 fig.show()
-
