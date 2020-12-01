@@ -11,25 +11,28 @@ from utils.dataset import BallDataset
 
 if torch.cuda.is_available():
     device = torch.device("cuda:0")
-    print("cuda")
+    print("Device:", torch.cuda.get_device_name(0))
+    print("Cuda Version:", torch.version.cuda)
 else:
     device = torch.device("cpu")
     print("cpu")
 
-EPOCHS = 50
+EPOCHS = 25
 BATCH_SIZE = 32
 loss_arr = []
 bd = BallDataset(
-    csv_file="data/true_annotations/resized_annotations.csv",
-    root_dir="data/resized_images",
+    csv_file="data/combined_data/combined.csv",
+    root_dir="data/combined_data/combined_images",
     transform=transforms.Compose([transforms.ToTensor()]),
 )
-train, test = torch.utils.data.random_split(bd, [3500, len(bd) - 3500])
+
+train, test = torch.utils.data.random_split(bd, [10000, len(bd) - 10000])
 
 trainset = torch.utils.data.DataLoader(train, batch_size=BATCH_SIZE, shuffle=True)
 testset = torch.utils.data.DataLoader(train, batch_size=BATCH_SIZE, shuffle=True)
 
 net = bbox().to(device)
+torch.cuda.empty_cache()
 optimizer = optim.Adam(net.parameters(), lr=0.001)
 for epoch in tqdm(range(EPOCHS)):
     for data in tqdm(trainset):
@@ -40,7 +43,7 @@ for epoch in tqdm(range(EPOCHS)):
         loss = F.l1_loss(output, y)
         loss.backward()
         optimizer.step()
-    print(loss)
+    print("Loss: ", loss.item())
     loss_arr.append(loss.item())
 
 x = np.linspace(1, EPOCHS, EPOCHS)
@@ -48,3 +51,4 @@ y = loss_arr
 
 fig = px.line(x=x, y=y)
 fig.show()
+

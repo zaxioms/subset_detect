@@ -130,4 +130,5 @@ if __name__ == "__main__":
     #     "data/orig_images",
     # )
 
-    grey_to_rgb("data/resized_images")
+    # grey_to_rgb("data/resized_images")
+    pass
