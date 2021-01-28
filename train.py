@@ -32,7 +32,9 @@ bd = BallDataset(
 
 train, test = torch.utils.data.random_split(bd, [10000, len(bd) - 10000])
 
-trainset = torch.utils.data.DataLoader(train, batch_size=BATCH_SIZE, shuffle=True)
+trainset = torch.utils.data.DataLoader(train,
+                                       batch_size=BATCH_SIZE,
+                                       shuffle=True)
 testset = torch.utils.data.DataLoader(test, batch_size=BATCH_SIZE, shuffle=True)
 
 net = bbox().to(device)

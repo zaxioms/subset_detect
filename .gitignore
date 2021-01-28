@@ -3,3 +3,4 @@ venv/
 .vscode/
 *instance_json/
 __pycache__/
+.flake8
