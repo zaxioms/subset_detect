@@ -21,7 +21,7 @@ else:
     device = torch.device("cpu")
     print("cpu")
 
-EPOCHS = 1
+EPOCHS = 30
 BATCH_SIZE = 32
 loss_arr = []
 bd = BallDataset(
@@ -57,27 +57,27 @@ y_axis = loss_arr
 fig = px.line(x=x_axis, y=y_axis)
 fig.show()
 
-test = io.imread("data/validation_images/test1.jpg")
-resized_image = cv2.resize(test, (256, 256))
-cv2.imwrite("data/validation_images/test1.jpg", resized_image)
-x = np.array(cv2.imread("data/validation_images/test1.jpg"))
+# test = io.imread("data/validation_images/test1.jpg")
+# resized_image = cv2.resize(test, (256, 256))
+# cv2.imwrite("data/validation_images/test1.jpg", resized_image)
+# x = np.array(cv2.imread("data/validation_images/test1.jpg"))
 
-x = torch.FloatTensor(x).view(-1, 3, 256, 256)
-print(x)
-print(x.shape)
-net.eval()
-with torch.no_grad():
-    out = net(x.to(device)).detach().cpu().numpy()
-print(out)
-fig, ax = plt.subplots(1)
-plt.imshow(test)
-rect = patches.Rectangle(
-    (out[0][0], out[0][1]),
-    out[0][2],
-    out[0][3],
-    linewidth=1,
-    edgecolor="r",
-    facecolor="none",
-)
-ax.add_patch(rect)
-plt.show()
+# x = torch.FloatTensor(x).view(-1, 3, 256, 256)
+# print(x)
+# print(x.shape)
+# net.eval()
+# with torch.no_grad():
+#     out = net(x.to(device)).detach().cpu().numpy()
+# print(out)
+# fig, ax = plt.subplots(1)
+# plt.imshow(test)
+# rect = patches.Rectangle(
+#     (out[0][0], out[0][1]),
+#     out[0][2],
+#     out[0][3],
+#     linewidth=1,
+#     edgecolor="r",
+#     facecolor="none",
+# )
+# ax.add_patch(rect)
+# plt.show()
